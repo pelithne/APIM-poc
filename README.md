@@ -105,3 +105,121 @@ Now, this dns name can be added to the API manager, with a policy similar to thi
 
 ## Create VPN "client"
 https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal
+
+On the client, I put this "API code". For it to run, you must for do
+
+````
+pip install flask-restful
+````
+
+````
+from flask import Flask                                                                         
+from flask_restful import Api, Resource, reqparse, request                                      
+                                                                                                
+app = Flask(__name__)                                                                           
+api = Api(app)                                                                                  
+                                                                                                
+users = [                                                                                       
+    {                                                                                           
+        "name": "Alexander",                                                                    
+        "age": 100,                                                                             
+        "occupation": "Beard Man"                                                               
+    },                                                                                          
+    {                                                                                           
+        "name": "Elvin",                                                                        
+        "age": 32,                                                                              
+        "occupation": "Doctor"                                                                  
+    },                                                                                          
+    {                                                                                           
+        "name": "Peter",                                                                        
+        "age": 45,                                                                              
+        "occupation": "Azure dude"                                                              
+    }                                                                                           
+]                                                                                               
+                                                                                                
+tools = [                                                                                       
+    {                                                                                           
+        "name": "Screwdriver",                                                                  
+        "size": 1                                                                               
+    },                                                                                          
+    {                                                                                           
+        "name": "Jack",                                                                         
+        "capacity": "5000 kg"                                                                   
+    },                                                                                          
+    {                                                                                           
+        "name": "Wrench",                                                                       
+        "weight": "10 kg"                                                                       
+    }                                                                                           
+]                                                                                               
+                                                                                                
+                                                                                                
+class Tool(Resource):                                                                           
+    def get(self, name):                                                                        
+        url = request.url                                                                       
+        print ("Request to: " +url)                                                             
+        print ("Name: " +name)                                                                  
+                                                                                                
+        for tool in tools:                                                                      
+          if(name == tool["name"]):                                                             
+            return tool, 200                                                                    
+        return "Tool not found", 404                                                            
+                                                                                                
+class User(Resource):                                                                           
+    def get(self, name):                                                                        
+        url = request.url                                                                       
+        print ("Request to: " +url)                                                             
+        print ("Name: " +name)                                                                  
+                                                                                                
+        for user in users:                                                                      
+          if(name == user["name"]):                                                             
+            return user, 200                                                                    
+        return "User not found", 404                                                            
+                                                                                                
+    def post(self, name):                                                                       
+        parser = reqparse.RequestParser()                                                       
+        parser.add_argument("age")                                                              
+        parser.add_argument("occupation")                                                       
+        args = parser.parse_args()                                                              
+                                                                                                
+        for user in users:                                                                      
+            if(name == user["name"]):                                                           
+                return "User with name {} already exists".format(name), 400                     
+                                                                                                
+        user = {                                                                                
+            "name": name,                                                                       
+            "age": args["age"],                                                                 
+            "occupation": args["occupation"]                                                    
+        }                                                                                       
+        users.append(user)                                                                      
+        return user, 201                                                                        
+                                                                                                
+    def put(self, name):                                                                        
+        parser = reqparse.RequestParser()                                                       
+        parser.add_argument("age")                                                              
+        parser.add_argument("occupation")                                                       
+        args = parser.parse_args()                                                              
+                                                                                                
+        for user in users:                                                                      
+            if(name == user["name"]):                                                           
+                user["age"] = args["age"]                                                       
+                user["occupation"] = args["occupation"]                                         
+                return user, 200                                                                
+                                                                                                
+        user = {                                                                                
+            "name": name,                                                                       
+            "age": args["age"],                                                                 
+            "occupation": args["occupation"]                                                    
+        }                                                                                       
+        users.append(user)                                                                      
+        return user, 201                                                                        
+                                                                                                
+    def delete(self, name):                                                                     
+        global users                                                                            
+        users = [user for user in users if user["name"] != name]                                
+        return "{} is deleted.".format(name), 200                                               
+                                                                                                
+api.add_resource(User, "/user/<string:name>")                                                   
+api.add_resource(Tool, "/tool/<string:name>")                                                   
+                                                                                                
+app.run(port= 8080, host= '0.0.0.0')                                                            
+````
