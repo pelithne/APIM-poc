@@ -22,15 +22,22 @@ az network private-dns link vnet create -g p2spoc -n MyDNSLink -z private.p2spoc
 ## Create APIM 
 -	Developer sku. 
 -	Internal (under network settings)
-- Select the VNET created before
-- Create API (e.g. "test-api")
-- Create operation (e.g. "user") 
-- Add policy for the operation (see further down)
+-   Select the VNET created before
+-   Create API (go to "APIS" in the left navbar then "Blank API". )
+-   Create operation (select the API, then "Add operation") 
+-   Add policy for the operation (see further down)
 
 
 ## VM for DNS-updater
+Please do this more securely! :-)
 ````
-az vm create -n dnsupdater -g p2spoc --image UbuntuLTS
+az vm create \
+  --resource-group "p2spoc" \
+  --name "dnsupdater" \
+  --image "UbuntuLTS" \
+  --admin-username "p2suser" \
+  --admin-password "p2suser@123" \
+  --location local
 ````
 Then ssh to the VM and do 
 ````
