@@ -53,6 +53,12 @@ dnszone = "private.p2spoc"
 resourcegroup = "p2spoc"
 ````
 
+In order to run the Flask restfull things, you need to install PIP and flask restful
+````
+sudo apt-get install python-pip
+pip install flask-restful
+````
+
 Now start the updater
 ````
 python dnsupdater.py
@@ -113,9 +119,10 @@ Now, this dns name can be added to the API manager, with a policy similar to thi
 ## Create VPN "client"
 https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal
 
-On the client, I put this "API code". For it to run, you must for do
+On the client, I put this "API code". For it to run you must, once again, do:
 
 ````
+sudo apt-get install python-pip
 pip install flask-restful
 ````
 
